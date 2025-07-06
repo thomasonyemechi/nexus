@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdminCredit;
@@ -19,7 +19,7 @@ function wallet()
 {
     $wallet = Auth::user()->wallet;
 
-    return substr($wallet, 0, 6).'...'.substr($wallet, -6);
+    return substr($wallet, 0, 6) . '...' . substr($wallet, -6);
 }
 
 
@@ -28,11 +28,11 @@ function wallet()
 
 function depositStatus($status)
 {
-    if($status == 'pending') {
+    if ($status == 'pending') {
         return '<div class="badge bg-secondary" > pending </div>';
-    }elseif($status == 'rejected'){
+    } elseif ($status == 'rejected') {
         return '<div class="badge bg-danger" > rejected </div>';
-    }elseif($status == 'approved'){
+    } elseif ($status == 'approved') {
         return '<div class="badge bg-success" > approved </div>';
     }
 }
@@ -53,7 +53,7 @@ function pendingWithAlert()
 
 function spcBalance($user_id)
 {
-    $balance = Wallet::where(['user_id' => $user_id, 'type' => '3' ])->sum('amount');
+    $balance = Wallet::where(['user_id' => $user_id, 'type' => '3'])->sum('amount');
     return $balance;
 }
 
@@ -70,10 +70,9 @@ function updateCreditRef()
     $all = Wallet::where(['type' => 2, 'action' => 'credit'])->get();
     $rate = PriceChange::latest()->first()->price;
 
-    foreach($all as $al) 
-    {
-        if($al->ref_id == 0) {
-            $credit = AdminCredit::where(['user_id' => $al->user_id , 'amount' => $al->amount])->first();
+    foreach ($all as $al) {
+        if ($al->ref_id == 0) {
+            $credit = AdminCredit::where(['user_id' => $al->user_id, 'amount' => $al->amount])->first();
             $al->update([
                 'ref_id' => $credit->id
             ]);
@@ -84,40 +83,39 @@ function updateCreditRef()
 
 function RCtotalDepost($user_id)
 {
-    $all = Wallet::where(['user_id' =>  $user_id, 'type' => 2, 'action' => 'credit'])->get();
+    $all = Wallet::where(['user_id' => $user_id, 'type' => 2, 'action' => 'credit'])->get();
     $total = 0;
 
-    foreach($all as $al) 
-    {
+    foreach ($all as $al) {
         $rate = $al->rate;
-        if(isset($al->credit)) {
-            if($al->credit->rate > 0) {
-                       $total += ($al->amount/ $al->credit->rate);
+        if (isset($al->credit)) {
+            if ($al->credit->rate > 0) {
+                $total += ($al->amount / $al->credit->rate);
             }
-    
-        }else {
+
+        } else {
             $total += 0;
         }
     }
     return $total;
-}   
+}
 
 
 function hybridTotalPurchase()
 {
-    return ;
+    return;
 }
 
 
-function usdtBalance($user_id) 
+function usdtBalance($user_id)
 {
-    $balance = Wallet::where(['user_id' => $user_id, 'type' => '1' ])->sum('amount');
+    $balance = Wallet::where(['user_id' => $user_id, 'type' => '1'])->sum('amount');
     return $balance;
 }
 
 function pcBalance($user_id)
 {
-    $balance = Wallet::where(['user_id' => $user_id, 'type' => '2' ])->sum('amount');
+    $balance = Wallet::where(['user_id' => $user_id, 'type' => '2'])->sum('amount');
     return $balance;
 }
 
@@ -125,31 +123,31 @@ function pcBalance($user_id)
 
 function depositAmount($amount)
 {
-    return number_format($amount, 2).' USDT';
+    return number_format($amount, 2) . ' USDT';
 }
 
 
 function dropError()
 {
-    if (session('success')){
+    if (session('success')) {
         return '
             <div class="mb-2 val_err ">
-                <i class="text-success fw-bold "> '.session('success') .' </i>
+                <i class="text-success fw-bold "> ' . session('success') . ' </i>
             </div>
         ';
-    }else if (session('error')) {
-    return '
+    } else if (session('error')) {
+        return '
         <div class="mb-2 val_err">
-            <i class="text-danger fw-bold "> '. session('error') .' </i>
+            <i class="text-danger fw-bold "> ' . session('error') . ' </i>
         </div>
     ';
-}
+    }
 }
 
 
 function admins()
 {
-    return [1,4,7];
+    return [1, 2];
 }
 
 
@@ -163,7 +161,7 @@ function byCoinFunc($user_id, $amount)
         'user_id' => $user_id,
         'amount' => $amount,
         'rate' => $rate,
-        'currency' => 'RC'
+        'currency' => 'nxt'
     ]);
 
     //debit user USDT beause of purchase
@@ -172,18 +170,18 @@ function byCoinFunc($user_id, $amount)
         'amount' => -$amount,
         'type' => 1,
         'user_id' => $user_id,
-        'remark' => 'Real Coin purchase',
+        'remark' => 'nexus token purchase',
         'ref_id' => $purchase->id,
         'action' => 'debit'
     ]);
 
     //credit user with coin
     Wallet::create([
-        'currency' => 'RC',
-        'amount' => ($amount * $rate) * 0.9,
+        'currency' => 'NXT',
+        'amount' => ($amount * $rate),
         'type' => 2,
         'user_id' => $user_id,
-        'remark' => 'Real Coin Deposit',
+        'remark' => 'Nexus Token Deposit',
         'ref_id' => $purchase->id,
         'action' => 'credit'
     ]);
@@ -195,113 +193,37 @@ function byCoinFunc($user_id, $amount)
 }
 
 
-function shareProfit($user_id, $amount, $currency='usdt')
+function shareProfit($user_id, $amount, $currency = 'usdt')
 {
     $user = User::find($user_id);
 
-    $rate = PriceChange::latest()->first()->price;
-    if($currency == 'usdt') {
-        $usdt_amount = $amount;
-    }else {
-        $usdt_amount = $amount / $rate;
-    }
+    $sponsor = ($user->sponsor) ? $user->sponsor : 2 ; 
 
+    $usdt_amount = $amount;
     // $sponsors = [ ['id' => $user->sponsor ?? 1, 'percent' => 6], ['id' => $user->sponsor_2 ?? 1, 'percent' => 2], ['id' => $user->sponsor_3 ?? 1, 'percent' => 2] ];
-    
+
     // sending only to one sponsor all the percentage 
+    $percent = ($usdt_amount * 10) / 100; //caluclating percentage
+    // log earnings 
 
-    $sponsors = [ ['id' => $user->sponsor ?? 1, 'percent' => 10] ];
 
-    foreach($sponsors as $spon) 
-    {   
-        $percent = ($usdt_amount * $spon['percent']) / 100; //caluclating percentage
-        // log earnings 
-        $earned = Earning::create([
-            'user_id' => $spon['id'],
-            'amount' => $percent,
-            'downline' => auth()->user()->id
-        ]);
+    $earned = Earning::create([
+        'user_id' => $sponsor,
+        'amount' => $percent,
+        'downline' => $user->id
+    ]);
 
-        Wallet::create([
-            'currency' => 'src',
-            'amount' => $percent,
-            'type' => 3,
-            'user_id' => $spon['id'],
-            'remark' => 'Earning',
-            'ref_id' => $earned->id,
-            'action' => 'credit'
-        ]);
-    }
+    Wallet::create([
+        'currency' => 'USDT',
+        'amount' => $percent,
+        'type' => 3,
+        'user_id' => $sponsor,
+        'remark' => 'Earning',
+        'ref_id' => $earned->id,
+        'action' => 'pending'
+    ]);
 
     return;
-}
-
-
-
-
-// zone level
-
-function slotMissedEarning($slot_id, $user_id, $currency='usdt')
-{
-    return MissedEarning::where(['user_id' => $user_id, 'zone_id' => $slot_id , 'currency' => $currency])->sum('amount');
-}
-
-
-function checkPackage($user_id, $slot_id)
-{
-    return MySlot::where(['user_id' => $user_id, 'zone_id' => $slot_id])->first();
-}
-
-
-
-
-function directDD($user_id, $slot_id)
-{
-    $users = User::where(['sponsor' => $user_id])->get(['id']); $count = 0;
-    foreach ($users as $user)
-    {
-        $check = MySlot::where(['user_id' => $user->id, 'zone_id' => $slot_id])->count();
-        if($check > 0){ $count += 1; }
-    }
-    
-    return $count;
-}
-
-
-function otherDD($user_id, $slot_id)
-{
-    $users = User::where(['sponsor' => $user_id])->orwhere(['sponsor_2' => $user_id])->orwhere(['sponsor_3' => $user_id])->orwhere(['sponsor_4' => $user_id])->get(['id']);
-    $count = 0;
-    foreach ($users as $user)
-    {
-        $check = MySlot::where(['user_id' => $user->id, 'zone_id' => $slot_id])->count();
-        if($check > 0){ $count += 1; }
-    }
-    
-    return $count;
-}
-
-
-
-function myEnergy($user_id)
-{
-    return MySlot::where(['user_id' => $user_id])->sum('amount');
-}
-
-
-
-function pickGen($user, $gen)
-{
-    $generations = []; 
-    for ($i=1; $i <=$gen ; $i++) { 
-        if($i ==1) {
-            $generations[] = ['gen_1' => $user->sponsor, 'position' => $i, 'user_id'=> $user->sponsor];
-        }else {
-            $generations[] = ['gen_'.$i => $user['sponsor_'.$i], 'position' => $i, 'user_id'=> $user['sponsor_'.$i]];
-        }
-    }
-    
-    return $generations;
 }
 
 

@@ -8,6 +8,7 @@
     <title> {{ env('APP_NAME') }} - Create Wallet </title>
     <link rel="stylesheet" href="{{ asset('assets/vendor/swiper/swiper.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/gboot.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600&amp;display=swap"
@@ -31,15 +32,44 @@
             <div class="login__content">
                 <h2 class="login__title">Create Wallet</h2>
                 <div class="login-form">
-                    <form id="LoginForm" method="post" action="">
+
+
+                    @if ($errors->any())
+                        <div>
+                            <ul class="minus mb-3 small">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="/create_account_action" method="post">
+                        @csrf
+
                         <div class="login-form__row">
                             <label class="login-form__label">TRX Wallet</label>
-                            <input type="text" name="wallet_address" value=""
+                            <input type="text" name="wallet_address" value="{{ old('wallet_address') }}"
                                 class="login-form__input required" />
+
+
+                            <input type="hidden" name="ref" value="{{ $_GET['ref'] ?? '' }}">
+
+
+                            @error('wallet_address')
+                                <i class="minus small mt-2"> {{ $message }} </i>
+                            @enderror
+
                         </div>
                         <div class="login-form__row">
-                            <label class="login-form__label">Pin Code</label>
-                            <input type="password" name="pin_code" value="" class="login-form__input required" />
+                            <label class="login-form__label">Create Code</label>
+                            <input type="password" name="code" value="" inputmode="numeric"
+                                class="login-form__input required" />
+
+                            @error('code')
+                                <i class="minus small mt-2"> {{ $message }} </i>
+                            @enderror
+
                         </div>
                         <div class="login-form__row">
 

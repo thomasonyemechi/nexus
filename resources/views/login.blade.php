@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, minimal-ui">
     <title> {{ env('APP_NAME') }} - Access Wallet </title>
     <link rel="stylesheet" href="{{ asset('assets/vendor/swiper/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/gboot.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -21,7 +22,8 @@
         <!-- HEADER -->
         <header class="header header--fixed">
             <div class="header__inner">
-                <div class="header__icon"><a href="/"><img src="{{ asset('assets/images/icons/arrow-back.svg') }}  " alt=""
+                <div class="header__icon"><a href="/"><img
+                            src="{{ asset('assets/images/icons/arrow-back.svg') }}  " alt=""
                             title="" /></a></div>
             </div>
         </header>
@@ -30,18 +32,36 @@
             <div class="login__content">
                 <h2 class="login__title">Access Wallet</h2>
                 <div class="login-form">
-                    <form id="LoginForm" method="post" action="">
+
+                    @if ($errors->any())
+                        <div class="mb-3 " >
+                            <ul class="minus small">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+
+
+
+                    <form action="/access_account" method="post">
+                        @csrf
+
                         <div class="login-form__row">
                             <label class="login-form__label">TRX Wallet</label>
-                            <input type="text" name="wallet_address" value="" class="login-form__input required"   />
+                            <input type="text" name="wallet_address" value="{{ old('wallet_address') }}"
+                                class="login-form__input required" />
                         </div>
                         <div class="login-form__row">
-                            <label class="login-form__label">Pin Code</label>
-                            <input type="password" name="pin_code" value="" class="login-form__input required" />
+                            <label class="login-form__label">Code</label>
+                            <input type="password" name="code" value="" class="login-form__input required" />
                         </div>
                         <div class="login-form__row">
 
-                                <button class="btn login-form__submit button button--main button--full" >Access Wallet</button>
+                            <button class="btn login-form__submit button button--main button--full">Access
+                                Wallet</button>
                         </div>
                     </form>
 

@@ -19,12 +19,17 @@ class Wallet extends Model
 
     function credit()
     {
-        if($this->type == 2) 
-        {
+        if ($this->type == 2) {
             return $this->belongsTo(AdminCredit::class, 'ref_id');
-        }else {
-            
+        } else {
+
         }
     }
+
+
+    // function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
 }

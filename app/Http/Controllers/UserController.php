@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminCredit;
+use App\Models\Airdrop;
 use App\Models\Announcment;
 use App\Models\CoinInfo;
 use App\Models\Earning;
@@ -64,6 +65,8 @@ class UserController extends Controller
         $rate = PriceChange::latest()->first()->price;
 
         $purchases = Purchase::where(['user_id' => $user_id])->orderby('id', 'desc')->limit(25)->get();
+
+        
         return view('mobile.convert', compact(['usdt_balance', 'user_id', 'rate', 'purchases']));
     }
 
@@ -287,13 +290,13 @@ class UserController extends Controller
     function buyCoin(Request $request)
     {
         $val = Validator::make($request->all(), [
-            'usdt_amount' => 'required|integer|min:10'
+            'usdt_amount' => 'required|integer|min:30'
         ])->validate();
         if ($request->usdt_amount > usdtBalance(auth()->user()->id)) {
             return back()->with('error', 'You don have up to this ammount of USDT in your wallet, fund your wallet and try again ');
         }
         byCoinFunc(auth()->user()->id, $request->usdt_amount);
-        return redirect('/wallet/wallet-overview')->with('success', 'Coin purchase was successful');
+        return redirect('/mobile/wallet-overview')->with('success', 'Coin purchase was successful');
     }
 
 
@@ -342,8 +345,9 @@ class UserController extends Controller
     function make_withdrawal(Request $request)
     {
         Validator::make($request->all(), [
-            'amount' => 'required|min:20'
-        ]);
+            'amount' => 'integer|required|min:20'
+        ])->validate();
+        
         ///logg withdrwal
         if ($request->amount > (usdtBalance(auth()->user()->id) - 1)) {
             return back()->with('error', 'Insufficient fund');
@@ -385,7 +389,7 @@ class UserController extends Controller
     {
         $new = 'usdt';
         if (auth()->user()->collect_currency == 'usdt') {
-            $new = 'hbc';
+            $new = 'nxt';
         }
         User::where('id', auth()->user()->id)->update([
             'collect_currency' => $new
@@ -393,6 +397,14 @@ class UserController extends Controller
 
         return back()->with('success', 'Currency has been updated');
     }
+
+    
+    function aridropIndex()
+    {
+        $airdrop = Airdrop::first();
+        return view('mobile.airdrops', compact(['airdrop']));
+    }
+
 
 }
 

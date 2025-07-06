@@ -17,9 +17,25 @@ class AdminController extends Controller
 {
 
 
+    function approveEarned($wallet_id)
+    {
+        Wallet::where(['id' => $wallet_id])->update([
+            'action' => 'credit'
+        ]);
+
+        return back()->with('success', 'Eanring has been approved');
+    }
+
+
+    public function earningindex()
+    {
+        $earnings = Wallet::where(['remark' => 'Earning'])->orderBy('id', 'desc')->paginate(30);
+        return view('admin.all_earnings', compact('earnings'));
+    }
+
     function dorate()
     {
-        $adminCredits = AdminCredit::where(['currency' => 'RC' ])->get();
+        $adminCredits = AdminCredit::where(['currency' => 'NXT' ])->get();
 
 
         foreach($adminCredits as $credit) 
@@ -367,7 +383,7 @@ class AdminController extends Controller
 
             // if credit action is a royalty credit do not buy coin and con not share profit
             if($request->type == 'normal') {
-                if($user->collect_currency == 'RC') {
+                if($user->collect_currency == 'NXT') {
                     //////// run buy function and but the crypto for the user else stop and credit
                     byCoinFunc($user->id, $request->amount);
                 }    
@@ -380,7 +396,7 @@ class AdminController extends Controller
 
             if($request->type == 'normal') {
                 // since credit users woth coin means they buy, also do the sharing percent to downline
-                shareProfit($user->id, $request->amount, 'RC');
+                shareProfit($user->id, $request->amount, 'NXT');
             }
         }
 

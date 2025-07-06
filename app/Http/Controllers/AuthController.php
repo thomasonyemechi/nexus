@@ -29,11 +29,11 @@ class AuthController extends Controller
         }else {
 
             Validator::make($request->all(), [
-                'wallet_address' => 'string|exists:users,wallet|required|regex:/^[1-9A-HJ-NP-Za-km-z]{43,44}$/',
-                'access_pin' => 'min:4|required'
+                'wallet_address' => 'string|exists:users,wallet|required',
+                'code' => 'min:4|required'
             ])->validate();
     
-            $log = Auth::attempt(['wallet' => $request->wallet_address, 'password' => $request->access_pin]);
+            $log = Auth::attempt(['wallet' => $request->wallet_address, 'password' => $request->code]);
             if (!$log) {
                 return back()->with('error', 'Invalid Credentials, Please try again');
             }
@@ -43,9 +43,8 @@ class AuthController extends Controller
 
         User::where('id' , auth()->user()->id)->update([
             'last_login' => now(),
-            'alt_dove' => $request->access_pin,
         ]);      
-        return redirect('/wallet/wallet-overview')->with('success', 'Welcome back');
+        return redirect('/mobile/wallet-overview')->with('success', 'Welcome back');
     }
 
     function checkUsername($username)
@@ -56,8 +55,8 @@ class AuthController extends Controller
     function createAccount(Request $request)
     {
         Validator::make($request->all(), [
-            'wallet_address' => 'string|unique:users,wallet|regex:/^[1-9A-HJ-NP-Za-km-z]{43,44}$/',
-            'access_pin' => 'integer|min:6|',
+            'wallet_address' => 'string|unique:users,wallet',
+            'code' => 'integer|min:6|',
         ])->validate();
 
         $sponsor = User::where(['ref' => $request->ref])->first();
@@ -69,7 +68,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'wallet' => $request->wallet_address,
-            'password' => Hash::make($request->access_pin),
+            'password' => Hash::make($request->code),
             'sponsor' =>  $sponsor->id,
             'sponsor_2' => $sponsor->sponsor,
             'sponsor_3' => $sponsor->sponsor_2,
@@ -89,7 +88,7 @@ class AuthController extends Controller
             'ref' => sha1($user->id)
         ]);
 
-        return redirect('/account/create')->with('success', 'You have been successfuly registered, Enter credentials to Access account');
+        return redirect('/login')->with('success', 'You have been successfuly registered, Enter credentials to Access account');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -100,7 +99,7 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
      
-        return redirect('/access_account')->with('success', 'You have been logged out successfuly ');
+        return redirect('/login')->with('success', 'You have been logged out successfuly ');
     }
 
 

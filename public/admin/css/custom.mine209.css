@@ -1,0 +1,300 @@
+/*!
+*
+* Template: Coinex - Responsive Bootstrap 5 Admin Dashboard Template
+* Author: iqonic.design
+* Design and Developed by: iqonic.design
+* NOTE: This file contains the styling for responsive Template.
+*
+*/
+@media (max-width: 1199.98px) {
+    .sidebar.sidebar-transparent {
+        background: #fff
+    }
+}
+
+:focus {
+    outline: none
+}
+
+small {
+    color: #BFBFBF
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px
+}
+
+::-webkit-scrollbar-track {
+    background: #19191A;
+    -webkit-border-radius: 20px;
+    border-radius: 20px
+}
+
+::-webkit-scrollbar-thumb {
+    background: #313135;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-transition: all 400ms ease;
+    -o-transition: all 400ms ease;
+    transition: all 400ms ease;
+    cursor: pointer
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #464649;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-transition: all 400ms ease;
+    -o-transition: all 400ms ease;
+    transition: all 400ms ease
+}
+
+.sign-bg {
+    position: absolute;
+    left: 0;
+    top: 0
+}
+
+.sign-bg.sign-bg-right {
+    left: auto;
+    right: 0
+}
+
+.gradient-main {
+    height: 100%;
+    width: 100%;
+    -o-object-fit: cover;
+    object-fit: cover
+}
+
+.login-bottom {
+    margin-top: -12.5rem
+}
+
+@media (min-width: 1400px) {
+    .auth-card {
+        padding: 0 6.25rem
+    }
+}
+
+@media (max-width: 991.98px) {
+    .res-hide {
+        display: none
+    }
+}
+
+@media (max-width: 575.98px) {
+    .login-header {
+        height: 12.5rem !important
+    }
+
+    .login-bottom {
+        margin-top: -6.25rem
+    }
+}
+
+.auth-bg {
+    margin: 0;
+    background: #19191A;
+    height: 100vh;
+    position: relative;
+    text-align: center
+}
+
+.auth-bg:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 50%;
+    background: #202022;
+    z-index: 0
+}
+
+.sign-in-img {
+    position: absolute;
+    left: 5%;
+    top: 0
+}
+
+@media (max-width: 1199.98px) {
+    .sign-in-img {
+        right: unset;
+        top: 330px
+    }
+
+    .sign-in-img svg {
+        width: 540px !important
+    }
+}
+
+.maintainance-search {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem
+}
+
+@media (max-width: 1199.98px) {
+    .sign-up-img2 {
+        right: unset;
+        top: unset
+    }
+
+    .sign-up-img2 svg {
+        width: 450px !important
+    }
+}
+
+.sign-up-img2 {
+    position: absolute;
+    left: 3%;
+    top: 5%
+}
+
+.rpw-img1 {
+    position: absolute;
+    right: 0;
+    top: 90px
+}
+
+.rpw-img1 svg {
+    width: 600px !important
+}
+
+@media (max-width: 1199.98px) {
+    .rpw-img1 {
+        left: unset;
+        top: 385px
+    }
+
+    .rpw-img1 svg {
+        width: 500px !important
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .rpw {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center
+    }
+}
+
+.lockscreen-img1 {
+    position: absolute;
+    right: 0;
+    top: 15%
+}
+
+@media (max-width: 1199.98px) {
+    .lockscreen-img1 {
+        top: 32%
+    }
+
+    .lockscreen-img1 svg {
+        width: 500px !important
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .lockscreen {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center
+    }
+}
+
+.cm-img1 {
+    position: absolute;
+    right: 5%;
+    top: 5%
+}
+
+@media (max-width: 1199.98px) {
+    .cm-img1 {
+        top: 32%
+    }
+
+    .cm-img1 svg {
+        width: 400px !important
+    }
+}
+
+.error-404 {
+    position: absolute;
+    right: 11%;
+    top: 15%
+}
+
+@media (max-width: 1199.98px) {
+    .error-404 {
+        top: 28%;
+        right: 3%
+    }
+
+    .error-404 svg {
+        width: 450px !important
+    }
+}
+
+.error-500 {
+    position: absolute;
+    right: 10%;
+    top: 10%
+}
+
+@media (max-width: 1199.98px) {
+    .error-500 {
+        top: 28%;
+        right: 3%
+    }
+
+    .error-500 svg {
+        width: 450px !important
+    }
+}
+
+@media (max-width: 991.98px) {
+    .maintenance-img svg {
+        display: none
+    }
+}
+
+@media (max-width: 575.98px) {
+    .maintenance-img {
+        margin-top: 25%
+    }
+}
+
+.img-right-banner-top {
+    width: 89%
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #878787
+}
+
+.form-control::-moz-placeholder {
+    color: #878787
+}
+
+.form-control::-ms-input-placeholder {
+    color: #878787
+}
+
+.form-control::placeholder {
+    color: #878787
+}
+
+input.form-control::-webkit-calendar-picker-indicator {
+    -webkit-filter: contrast(0);
+    filter: contrast(0)
+}
+
+/*# sourceMappingURL=maps/custom.min.css.map */

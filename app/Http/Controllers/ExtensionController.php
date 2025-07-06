@@ -360,7 +360,7 @@ class ExtensionController extends Controller
     {
         $new = 'usdt';
         if(auth()->user()->collect_currency == 'usdt') {
-            $new = 'hbc';
+            $new = 'nxt';
         }
         User::where('id', auth()->user()->id)->update([
             'collect_currency' => $new
