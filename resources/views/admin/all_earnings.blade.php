@@ -33,25 +33,26 @@
                                                     {{ putwallet($dep->user->wallet ?? '') }}
                                                 </td>
                                                 <td class="align-middle border-top-0">
-                                                    {{ $dep->amount }}
+                                                    {{ $dep->amount }} USDT
                                                 </td>
                                                 <td class="align-middle border-top-0">
-                                                    {{ $dep->action }}
-                                                    {{-- {!! depositStatus($dep->action) !!} --}}
+                                                    {!! depositStatus($dep->action) !!}
                                                 </td>
 
                                                 <td class="align-middle border-top-0">
                                                     {{ $dep->created_at }}
                                                 </td>
 
-
                                                 <th>
+                                                    <div class="d-flex justify-content-end">
+                                                        @if ($dep->action == 'pending')
+                                                            <a href="/admin/approve_earning/{{ $dep->id }}"
+                                                                class="btn btn-sm mx-2 btn-success">Approve </a>
+                                                            <a href="/admin/reject_earning/{{ $dep->id }}"
+                                                                class="btn btn-sm btn-danger">Reject </a>
+                                                        @endif
 
-
-                                                    @if ($dep->action == 'pending')
-                                                        <a href="/admin/approve_earning/{{ $dep->id }}" class="btn btn-sm btn-success" >Approve Earning </a>
-                                                    @endif
-
+                                                    </div>
 
                                                 </th>
 

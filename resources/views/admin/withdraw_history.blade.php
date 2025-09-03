@@ -89,4 +89,86 @@
             </div>
         </div>
     </div>
+
+
+    
+    <div class="modal fade" id="rejectDepositModal" tabindex="-1" role="dialog" aria-labelledby="newCatgoryLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <form method="POST" action="/admin/withdrawal/reject_withdrawal"> @csrf
+                        <h3>Reject Deposit</h3>
+                        <p class="text-danger"></p>
+                        <div class="form-group">
+                            <label for="">State Reason For Rejection</label>
+                            <input type="text" class="form-control" name="remark">
+                            <input type="hidden" class="form-control" name="id">
+                        </div>
+
+                        <div class="mt-2 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-danger">Reject Deposit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approveDepositModal" tabindex="-1" role="dialog" aria-labelledby="newCatgoryLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <form method="POST" action="/admin/withdrawal/approve_withdrawal"> @csrf
+                        <h3>Approve</h3>
+                        <p class="text-success"></p>
+
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" name="id">
+                        </div>
+
+                        <div class="mt-2 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-success">Approve</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
 @endsection
+
+
+
+@push('scripts')
+    <script>
+        $(function() {
+
+            $('body').on('click', '.rejectbtn', function() {
+                data = $(this).data('data');
+                console.log(data);
+
+                modal = $('#rejectDepositModal')
+                modal.modal('show');
+                modal.find('p').html(`Reject this withdrawal `)
+                modal.find('input[name="id"]').val(data.id);
+            })
+
+
+            $('body').on('click', '.approvebtn', function() {
+                data = $(this).data('data');
+                console.log(data);
+
+                modal = $('#approveDepositModal')
+                modal.modal('show');
+                modal.find('p').html(`You will transfer  ${data.amount} USDT to  ${data.wallet_address} `)
+                modal.find('input[name="id"]').val(data.id);
+            })
+        })
+    </script>
+@endpush

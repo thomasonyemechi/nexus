@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="web/css/fonts/ff-1.css">
   <link rel="stylesheet" href="web/css/fonts/ff-3.css">
   <link rel="stylesheet" href="web/css/fonts/bootstrap-icons.css">
-  <link rel="icon" href="web/img/favx.png" type="image/png">
+  <link rel="icon" href="web/icon.jpg" type="image/png">
   <link rel="stylesheet" href="web/css/plugins.css">
   <link rel="stylesheet" href="web/css/style.css">
   <style type="text/css">
@@ -101,7 +101,7 @@
             <div class="d-flex align-items-center justify-content-between">
               <a href="./" class="logo link d-inline-flex align-items-center flex-shrink-0">
                 <!-- <span class="d-block fs-24 fw-bold text-white">Botstripe</span> -->
-                <img src="web/img/nxt.png" width="200" alt="" class="img-fluid object-fit-contain">
+                <img src="assets/images/wenlogo.png" width="200" alt="" class="img-fluid object-fit-contain">
               </a>
               <button
                 class="menu-toggle w-10 h-10 p-0 border-0 lh-1 bg-primary-50 clr-neutral-100 :clr-neutral-100 transition :bg-primary-300 rounded flex-shrink-0 d-lg-none order-sm-3 fs-24">
@@ -424,7 +424,7 @@
           <div class="team-section-wrapper">
             <div class="row align-items-center">
               <div class="col-xl-6">
-                <img src="web/img/nexus.jpg" alt="image" class="img-fluid">
+                <img src="web/icon.jpg" alt="image" class="img-fluid">
               </div>
               <div class="col-xl-6">
                 <p class="fs-18 fw-bold clr-neutral-80">NXT token is the decentralised utility and native token of the

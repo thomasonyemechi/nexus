@@ -29,7 +29,7 @@ class AuthController extends Controller
         }else {
 
             Validator::make($request->all(), [
-                'wallet_address' => 'string|exists:users,wallet|required',
+                'wallet_address' => 'string|exists:users,wallet|required|regex:/^T[1-9A-HJ-NP-Za-km-z]{33}$/',
                 'code' => 'min:4|required'
             ])->validate();
     
@@ -55,7 +55,7 @@ class AuthController extends Controller
     function createAccount(Request $request)
     {
         Validator::make($request->all(), [
-            'wallet_address' => 'string|unique:users,wallet',
+            'wallet_address' => 'string|unique:users,wallet|regex:/^T[1-9A-HJ-NP-Za-km-z]{33}$/',
             'code' => 'integer|min:6|',
         ])->validate();
 

@@ -9,6 +9,7 @@ use App\Models\CoinInfo;
 use App\Models\Earning;
 use App\Models\PriceChange;
 use App\Models\Purchase;
+use App\Models\RoyaltyPayout;
 use App\Models\Trade;
 use App\Models\Transfer;
 use App\Models\User;
@@ -54,8 +55,12 @@ class UserController extends Controller
         $announcement = Announcment::get();
 
 
+        $total_earnings = Wallet::where(['user_id' => auth()->user()->id, 'remark' => 'Earning'])->sum('amount') + Wallet::where(['user_id' => auth()->user()->id, 'remark' => 'Royal Earning'])->sum('amount');
+        $pending_count = Earning::where(['user_id' => auth()->user()->id, 'action' => 'approved'])->count();
+
+
         $transactions = Wallet::where(['user_id' => auth()->user()->id])->orderby('id', 'desc')->limit(10)->get();
-        return view('mobile.overview', compact(['transactions', 'pc_balance', 'user_id', 'rate', 'pc_total', 'total', 'usdt_balance', 'spc_balance', 'announcement']));
+        return view('mobile.overview', compact(['transactions', 'pc_balance', 'pending_count', 'total_earnings', 'user_id', 'rate', 'pc_total', 'total', 'usdt_balance', 'spc_balance', 'announcement']));
     }
 
     function convertIndex()
@@ -66,8 +71,26 @@ class UserController extends Controller
 
         $purchases = Purchase::where(['user_id' => $user_id])->orderby('id', 'desc')->limit(25)->get();
 
-        
+
         return view('mobile.convert', compact(['usdt_balance', 'user_id', 'rate', 'purchases']));
+    }
+
+
+    function royaltyIndex()
+    {
+        $user_id = auth()->user()->id;
+        $usdt_balance = usdtBalance($user_id);
+        $rate = PriceChange::latest()->first()->price;
+
+        $royalty = Purchase::where(['user_id' => $user_id, ['amount', '>', 2000]])->first();
+
+
+        $royalties = RoyaltyPayout::where(['user_id' => $user_id])->get();
+
+
+
+
+        return view('mobile.royalty', compact(['usdt_balance', 'user_id', 'rate', 'royalty', 'royalties']));
     }
 
     function tradeIndex()
@@ -287,6 +310,92 @@ class UserController extends Controller
     }
 
 
+    function claimComission($earning)
+    {
+        $earned = Earning::find($earning);
+
+        if (!$earned) {
+            return response()->json([
+                'message' => 'Not a valid bonus'
+            ], 422);
+        }
+
+        // check if earnig has been claimed before
+        $check = Wallet::where(['ref_id' => $earned->id, 'remark' => 'Earning',])->first();
+
+
+
+        if ($check == 0) {
+
+
+
+
+            $earned->update([
+                'action' => 'claimed'
+            ]);
+
+            Wallet::create([
+                'currency' => 'USDT',
+                'amount' => $earned->amount,
+                'type' => 3,
+                'user_id' => $earned->user_id,
+                'remark' => 'Earning',
+                'ref_id' => $earned->id,
+                'action' => 'credit'
+            ]);
+
+            return response()->json([
+                'sucess' => 'Bonus has been claimed and added to your balance'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Bonus has already been claimed'
+        ], 422);
+    }
+
+
+
+
+
+    function claimRoyal($earning)
+    {
+        $earned = RoyaltyPayout::find($earning);
+        if (!$earned) {
+            return response()->json([
+                'message' => 'Not a valid bonus'
+            ], 422);
+        }
+        // check if earnig has been claimed before
+        $check = Wallet::where(['ref_id' => $earned->id, 'remark' => 'Royal Earning',])->first();
+        if ($check == 0) {
+            $earned->update([
+                'action' => 'claimed'
+            ]);
+
+            Wallet::create([
+                'currency' => 'USDT',
+                'amount' => $earned->amount,
+                'type' => 3,
+                'user_id' => $earned->user_id,
+                'remark' => 'Royal Earning',
+                'ref_id' => $earned->id,
+                'action' => 'credit'
+            ]);
+
+            return response()->json([
+                'sucess' => 'Bonus has been claimed and added to your balance'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Bonus has already been claimed'
+        ], 422);
+    }
+
+
+    
+
     function buyCoin(Request $request)
     {
         $val = Validator::make($request->all(), [
@@ -347,7 +456,7 @@ class UserController extends Controller
         Validator::make($request->all(), [
             'amount' => 'integer|required|min:20'
         ])->validate();
-        
+
         ///logg withdrwal
         if ($request->amount > (usdtBalance(auth()->user()->id) - 1)) {
             return back()->with('error', 'Insufficient fund');
@@ -398,15 +507,10 @@ class UserController extends Controller
         return back()->with('success', 'Currency has been updated');
     }
 
-    
+
     function aridropIndex()
     {
         $airdrop = Airdrop::first();
         return view('mobile.airdrops', compact(['airdrop']));
     }
-
-
 }
-
-
-

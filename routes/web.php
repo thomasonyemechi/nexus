@@ -66,10 +66,15 @@ Route::group(['prefix' => 'mobile', 'middleware' => ['auth']], function () {
 
     Route::get('/received', [UserController::class, 'rIndex']);
     Route::get('/earnings', [UserController::class, 'earningsIndex']);
+    Route::get('/claim_bonus/{earning}', [UserController::class, 'claimComission']);
+    Route::get('/claim_royal/{earning}', [UserController::class, 'claimRoyal']);
     Route::get('/invite', [UserController::class, 'inviteIndex']);
 
     Route::get('/purchase-fiat', [UserController::class, 'convertIndex']); //
     Route::post('/purchase-fiat', [UserController::class, 'buyCoin'])->name('buy_coin');
+
+    Route::get('/royalty', [UserController::class, 'royaltyIndex']); //
+
 
     // airdrops 
 
@@ -93,7 +98,11 @@ Route::group(['prefix' => 'admin/', 'as' => 'admin.', 'middleware' => ['auth', '
     Route::get('/debit', [AdminController::class, 'debit']);
     Route::get('/users', [AdminController::class, 'usersIndex']);
     Route::get('/user/{wallet}', [AdminController::class, 'userIndex']);
+
     Route::get('/users/royalty', [AdminController::class, 'royalusersIndex']);
+    Route::get('/users/credit_royalty', [AdminController::class, 'creditRoyalusersIndex']);
+    Route::post('/users/distribute', [AdminController::class, 'distribute']);
+    Route::post('/users/distribute_single', [AdminController::class, 'distributeSingle']);
 
     Route::get('/set_price', [SettingsController::class, 'setPriceIndex']);
     Route::post('/set_price', [SettingsController::class, 'updateCoinPrice']);

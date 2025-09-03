@@ -74,6 +74,13 @@
 
 
                                 <li>
+                                    <a href="/mobile/earnings">
+                                        <i class="bi bi-person-add me-4" style="font-size: 20px;"></i>
+                                        <span>Earnings</span></a>
+                                </li>
+
+
+                                <li>
                                     <a href="/mobile/deposit">
                                         <i class="bi bi-arrow-down-square-fill me-4" style="font-size: 20px;"></i>
                                         <span>Deposit </span></a>
@@ -81,10 +88,23 @@
 
 
 
+                                <li>
+                                    <a href="/mobile/royalty">
+                                        <i class="bi bi-gem me-4" style="font-size: 20px;"></i>
+                                        <span>Royalty  </span></a>
+                                </li>
+
+
+
+
+                                
+
+
+
 
                                 @if (in_array(auth()->user()->id, admins()))
                                     <li>
-                                        <a href="/admin/dashboard" target="_blank" >
+                                        <a href="/admin/dashboard" target="_blank">
                                             <i class="bi bi-arrow-bar-up me-4" style="font-size: 20px;"></i>
                                             <span>Access Admin</span></a>
                                     </li>
@@ -138,7 +158,8 @@
                 </li>
                 <li><a href="#" class="open-popup" data-popup="notifications"><img
                             src="{{ asset('assets/images/icons/notifications.svg') }}" alt=""
-                            title="" /><i> {{ $announcement_count }} </i></a></li>
+                            title="" /><i>
+                            {{ $announcement_count }} </i></a></li>
                 <li><a href="/mobile/airdrops">
                         <i class="bi bi-gift" style="font-size: 22px; color:white "></i>
                     </a>

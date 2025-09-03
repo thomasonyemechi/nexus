@@ -73,25 +73,15 @@
         <div class="swiper-container slider-portfolio slider-portfolio--round-corners slider-init mb-40"
             data-paginationtype="progressbar" data-spacebetweenitems="10" data-itemsperview="auto">
             <div class="swiper-wrapper">
+             
                 <div class="swiper-slide slider-portfolio__slide slider-portfolio__slide--1h">
                     <div class="slider-portfolio__caption caption">
                         <div class="caption__content">
-                            <a href="#">
-                                <h2 class="caption__title"><span>Royal Strength</span>
-                                </h2>
-                                <div class="caption__chart"><canvas class="chartup" width="100%" height="5"></canvas>
-                                </div>
-                                <div class="caption__info"><strong> $ {{ number_format($price) }}</strong>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide slider-portfolio__slide slider-portfolio__slide--1h">
-                    <div class="slider-portfolio__caption caption">
-                        <div class="caption__content">
-                            <a href="#">
-                                <h2 class="caption__title"><span>Royalty</span>
+                            <a href="/mobile/royalty">
+
+                                <h2 class="caption__title">
+                                <img src="{{ asset('assets/images/crystal.png') }}" alt="">
+                                    <span>CRYSTAL MEMEBR</span>
                                 </h2>
                                 <div class="caption__chart"><canvas class="chartup" width="100%" height="5"></canvas>
                                 </div>

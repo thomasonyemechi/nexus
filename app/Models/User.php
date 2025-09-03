@@ -68,9 +68,9 @@ class User extends Authenticatable
     }
 
 
-    public function royalty()
+    public function purchases()
     {
-        return coinTotalPurchase($this->id);
+        return $this->hasMany(Purchase::class,);
     }
 
     public function downlines()
@@ -85,19 +85,4 @@ class User extends Authenticatable
     }
 
 
-    function zoneUsdtBalance()
-    {
-        return zoneUsdtBalance($this->id);
-    }
-
-
-    function zoneRCBalance()
-    {
-        return zoneRCBalance($this->id);
-    }
-
-    function myEnergy()
-    {
-        return myEnergy($this->id);
-    }
 }

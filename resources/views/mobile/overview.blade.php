@@ -20,6 +20,10 @@
 
             <a href="/mobile/purchase-fiat"><img src="{{ asset('assets/images/icons/swap.svg') }}" alt=""
                     title=""><span>BUY</span></a>
+
+
+            <a href="/mobile/earnings"><img src="{{ asset('assets/images/icons/wallet.svg') }}" alt=""
+                    title=""><span>Earn</span></a>
         </div>
 
         <div class="page-inner">
@@ -40,8 +44,9 @@
                         <div class="slider-portfolio__caption caption">
                             <div class="caption__content">
                                 <a href="#">
-                                    <h2 class="caption__title"><img src="{{ asset('logo.jpg') }}" style="border-radius: 50%;" 
-                                            alt="" title="" /><span>Nexus Token</span><strong>/ NXT</strong>
+                                    <h2 class="caption__title"><img src="{{ asset('logo.jpg') }}"
+                                            style="border-radius: 50%;" alt="" title="" /><span>Nexus
+                                            Token</span><strong>/ NXT</strong>
                                     </h2>
                                     <div class="caption__chart"><canvas class="chartup" width="100%"
                                             height="60"></canvas></div>
@@ -65,10 +70,35 @@
                                     </h2>
                                     <div class="caption__chart"><canvas class="chartup" width="100%"
                                             height="60"></canvas></div>
-                                    <div class="caption__info"><b>{{ number_format($usdt_balance, 2) }} USDT</b> <b> </b>
+                                    <div class="caption__info"><b>{{ number_format($usdt_balance + $total_earnings, 2) }} USDT</b> <b> </b>
                                     </div>
-                                    <div class="caption__info"><strong>$ {{ number_format($usdt_balance, 2) }} </strong>
+                                    <div class="caption__info"><strong>$ {{ number_format($usdt_balance + $total_earnings, 2) }} </strong>
                                         <span class="plus"> 1.00 </span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="swiper-slide slider-portfolio__slide slider-portfolio__slide--1h">
+                        <div class="slider-portfolio__caption caption">
+                            <div class="caption__content">
+                                <a href="d">
+                                    <h2 class="caption__title"><img src="{{ asset('assets/images/logos/tether.png') }}"
+                                            alt="" title="" /><span>Earnings</span><strong></strong>
+                                    </h2>
+                                    <div class="caption__chart"><canvas class="chartup" width="100%"
+                                            height="60"></canvas></div>
+                                    <div class="caption__info"><b>.</b> <b> </b>
+                                    </div>
+                                    <div class="caption__info"><strong>$ {{ number_format($total_earnings, 2) }} </strong>
+
+                                        @if ($pending_count > 1)
+                                            <a href="/mobile/earnings"> <span class="plus">{{ $pending_count }}</span> <span>unclaimed</span>
+                                            </a>
+                                        @endif
                                     </div>
                                 </a>
                             </div>
@@ -101,7 +131,8 @@
                             </span>
                         </div>
                         <div class="card-coin__price">
-                            <span class="plus fw-bold">{{ $trno->remark }} </span>
+                            <span class="plus fw-bold">{{ $trno->remark == 'Admin Deposit' ? 'Deposit' : $trno->remark }}
+                            </span>
                         </div>
                     </a>
                 @endforeach

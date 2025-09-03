@@ -14,4 +14,10 @@ class Earning extends Model
     {
         return $this->belongsTo(User::class, 'downline');
     }
+
+    function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+
+    }
 }

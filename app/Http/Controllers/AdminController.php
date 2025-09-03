@@ -6,7 +6,9 @@ use App\Models\AdminCredit;
 use App\Models\AdminDebit;
 use App\Models\Announcment;
 use App\Models\Deposit;
+use App\Models\Earning;
 use App\Models\PriceChange;
+use App\Models\RoyaltyPayout;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
@@ -19,34 +21,40 @@ class AdminController extends Controller
 
     function approveEarned($wallet_id)
     {
-        Wallet::where(['id' => $wallet_id])->update([
-            'action' => 'credit'
-        ]);
+        $earned = Earning::findOrFail($wallet_id);
 
-        return back()->with('success', 'Eanring has been approved');
+        if ($earned->action == 'pending') {
+            $earned->update([
+                'action' => 'approved'
+            ]);
+
+            return back()->with('success', 'Earning has been approved');
+        } else {
+            return back()->with('error', 'Action has already been taked on Earning');
+        }
     }
 
 
     public function earningindex()
     {
-        $earnings = Wallet::where(['remark' => 'Earning'])->orderBy('id', 'desc')->paginate(30);
+        // $earnings = Wallet::where(['remark' => 'Earning'])->orderBy('id', 'desc')->paginate(30);
+        $earnings = Earning::orderBy('id', 'desc')->paginate(30);
+
         return view('admin.all_earnings', compact('earnings'));
     }
 
     function dorate()
     {
-        $adminCredits = AdminCredit::where(['currency' => 'NXT' ])->get();
+        $adminCredits = AdminCredit::where(['currency' => 'NXT'])->get();
 
 
-        foreach($adminCredits as $credit) 
-        {
-            if(!$credit->rate) {
+        foreach ($adminCredits as $credit) {
+            if (!$credit->rate) {
                 $rate = PriceChange::latest()->first()->price;
                 AdminCredit::where('id', $credit->id)->update([
                     'rate' => $rate
                 ]);
             }
-
         }
 
         return 'done';
@@ -54,21 +62,20 @@ class AdminController extends Controller
 
     function adminIndex()
     {
-        $pc_balance = Wallet::where(['type' => '2' ])->sum('amount');
+        $pc_balance = Wallet::where(['type' => '2'])->sum('amount');
 
         $rate = PriceChange::latest()->first()->price;
-        $pc_total =  $pc_balance / $rate;
+        $pc_total = $pc_balance / $rate;
 
-        $usdt_balance = $balance = Wallet::where(['type' => '1' ])->sum('amount');
+        $usdt_balance = $balance = Wallet::where(['type' => '1'])->sum('amount');
 
-        $spc_balance = Wallet::where(['type' => '3' ])->sum('amount');
+        $spc_balance = Wallet::where(['type' => '3'])->sum('amount');
 
         $total = $pc_total + $usdt_balance + $spc_balance;
         $announcement = Announcment::get();
         $transactions = Wallet::with(['user'])->orderby('id', 'desc')->limit(12)->get();
         $credits = AdminCredit::with(['user', 'admin'])->orderby('id', 'desc')->limit(10)->get();
         return view('admin.index', compact(['transactions', 'pc_balance', 'rate', 'pc_total', 'total', 'credits', 'usdt_balance', 'spc_balance', 'announcement']));
-
     }
 
 
@@ -92,20 +99,19 @@ class AdminController extends Controller
 
 
     function userIndex($wallet)
-    {   
+    {
         $user = User::where(['wallet' => $wallet])->first();
-        if(!$user)
-        {
+        if (!$user) {
             abort('404');
         }
 
-        
+
 
         $user_id = $user->id;
         $pc_balance = pcBalance($user_id);
 
         $rate = PriceChange::latest()->first()->price;
-        $pc_total =  $pc_balance / $rate;
+        $pc_total = $pc_balance / $rate;
 
         $usdt_balance = usdtBalance($user_id);
 
@@ -114,20 +120,33 @@ class AdminController extends Controller
         $total = $pc_total + $usdt_balance + $spc_balance;
 
 
-        
+
         $transactions = Wallet::where(['user_id' => $user->id])->orderby('id', 'desc')->limit(10)->get();
         $wallet_transactions = Wallet::where(['user_id' => $user->id])->orderby('id', 'desc')->limit(10)->get();
         return view('admin.user', compact(['transactions', 'pc_balance', 'user_id', 'rate', 'pc_total', 'total', 'usdt_balance', 'spc_balance', 'user', 'wallet_transactions']));
-    }   
+    }
 
 
     function royalusersIndex(Request $request)
     {
-        $users = User::with(['spon:id,username'])->get();
+        $users = User::whereHas('purchases', function ($q) {
+            $q->where('amount', '>=', 2000);
+        })->withMax('purchases', 'amount')->get();
+
 
         return view('admin.royaty', compact(['users']));
     }
 
+
+    function creditRoyalusersIndex()
+    {
+        $users = User::whereHas('purchases', function ($q) {
+            $q->where('amount', '>=', 2000);
+        })->withMax('purchases', 'amount')->get();
+
+
+        return view('admin.royalty_credit', compact(['users']));
+    }
 
     function depositHistoryIndex()
     {
@@ -232,7 +251,7 @@ class AdminController extends Controller
         // if ($with->amount > usdtBalance($with->user_id)) {
         //     return back()->with('error', 'This deposit cannot be approved');
         // }
-        
+
         $with->update([
             'processed_by' => auth()->user()->id,
             'status' => 'approved'
@@ -272,7 +291,7 @@ class AdminController extends Controller
 
     public function createAccouncement(Request $request)
     {
-        $res  = Validator::make($request->all(), [
+        $res = Validator::make($request->all(), [
             'announcement' => 'required|min:3|string',
         ])->validate();
 
@@ -345,7 +364,7 @@ class AdminController extends Controller
         ])->validate();
 
 
-        
+
         if (!password_verify($request->access_pin, auth()->user()->password)) {
             return back()->with('error', 'You entered a wrong password');
         }
@@ -373,34 +392,33 @@ class AdminController extends Controller
             'user_id' => $user->id,
             'remark' => $request->remark ?? 'Admin Deposit',
             'action' => 'credit',
-            'type' => 0, 
+            'type' => 0,
         ]);
 
-        if($request->currency == 'usdt') {
+        if ($request->currency == 'usdt') {
             $wallet->update([
-                'type' => 1, 
+                'type' => 1,
             ]);
 
             // if credit action is a royalty credit do not buy coin and con not share profit
-            if($request->type == 'normal') {
-                if($user->collect_currency == 'NXT') {
+            if ($request->type == 'normal') {
+                if ($user->collect_currency == 'NXT') {
                     //////// run buy function and but the crypto for the user else stop and credit
                     byCoinFunc($user->id, $request->amount);
-                }    
+                }
             }
-         
-        }else {
+        } else {
             $wallet->update([
-                'type' => 2, 
+                'type' => 2,
             ]);
 
-            if($request->type == 'normal') {
+            if ($request->type == 'normal') {
                 // since credit users woth coin means they buy, also do the sharing percent to downline
                 shareProfit($user->id, $request->amount, 'NXT');
             }
         }
 
-        
+
 
         return back()->with('success', 'Wallet has been sucessfuly credited');
     }
@@ -418,7 +436,7 @@ class AdminController extends Controller
         ])->validate();
 
 
-        
+
         if (!password_verify($request->access_pin, auth()->user()->password)) {
             return back()->with('error', 'You entered a wrong password');
         }
@@ -445,26 +463,86 @@ class AdminController extends Controller
             'user_id' => $user->id,
             'remark' => $request->remark ?? 'Admin Debit',
             'action' => 'debit',
-            'type' => 0, 
+            'type' => 0,
         ]);
 
-        if($request->currency == 'usdt') {
+        if ($request->currency == 'usdt') {
             $wallet->update([
-                'type' => 1, 
+                'type' => 1,
             ]);
-
-        }else if($request->currency == 'shc') {
+        } else if ($request->currency == 'shc') {
             $wallet->update([
-                'type' => 3, 
-            ]); 
-        }else {
+                'type' => 3,
+            ]);
+        } else {
             $wallet->update([
-                'type' => 2, 
+                'type' => 2,
             ]);
         }
 
-        
+
 
         return back()->with('success', 'Wallet has been sucessfuly credited');
     }
+
+
+    public function distribute(Request $request)
+    {
+        $userIds = $request->input('user_id');
+        $royalties = $request->input('royal_percent_main');
+        $percent = $request->input('royal_percent');
+
+        foreach ($userIds as $index => $userId) {
+            $amount = $royalties[$index] * $percent[$index];
+            $uuid = $userId . date('y-m-d');
+
+
+            $find = RoyaltyPayout::where('uuid', $uuid)->first();
+
+            if (!$find) {
+                // Save or dispatch royalty payout
+                RoyaltyPayout::create([
+                    'uuid' => $uuid,
+                    'user_id' => $userId,
+                    'amount' => $amount,
+                    'distributed_at' => now(),
+                    'action' => 'approved'
+                ]);
+            }
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function distributeSingle(Request $request)
+    {
+
+
+        $userId = $request->input('user_id');
+        $amount = $request->input('amount');
+
+        $uuid = $userId . date('y-m-d');
+        $find = RoyaltyPayout::where('uuid', $uuid)->first();
+
+        if (!$find) {
+            // Save or dispatch royalty payout
+            RoyaltyPayout::create([
+                'uuid' => $uuid,
+                'user_id' => $userId,
+                'amount' => $amount,
+                'distributed_at' => now(),
+                'action' => 'approved'
+            ]);
+
+            return back()->with('success', 'Crystal rewards has been cedited');
+
+        }
+
+        return back()->with('error', 'you can\'t credit crystal reward twice');
+
+
+
+    }
+
 }

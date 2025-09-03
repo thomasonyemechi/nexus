@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\RoyaltyPayout;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdminCredit;
 use App\Models\CoinInfo;
@@ -13,7 +14,7 @@ use App\Models\User;
 use App\Models\Withdrawal;
 use App\Models\ZEarning;
 use App\Models\Zwallet;
-
+use Carbon\Carbon;
 
 function wallet()
 {
@@ -23,17 +24,27 @@ function wallet()
 }
 
 
+function checkRoyal($user_id)
+{
+    $royalty = Purchase::where(['user_id' => $user_id, ['amount', '>=', 2000]])->first();
+    if ($royalty) {
+        return $royalty->amount;
+    }
 
+    return 0;
+}
 
 
 function depositStatus($status)
 {
     if ($status == 'pending') {
-        return '<div class="badge bg-secondary" > pending </div>';
+        return '<div class=" alert py-1 bg-secondary" > pending </div>';
     } elseif ($status == 'rejected') {
-        return '<div class="badge bg-danger" > rejected </div>';
+        return '<div class=" alert py-1 bg-danger" > rejected </div>';
     } elseif ($status == 'approved') {
-        return '<div class="badge bg-success" > approved </div>';
+        return '<div class=" alert py-1 bg-success" > approved </div>';
+    } elseif ($status == 'claimed') {
+        return '<div class=" alert py-1 bg-warning" > claimed </div>';
     }
 }
 
@@ -47,6 +58,14 @@ function putwallet($wallet)
 function pendingWithAlert()
 {
     $with = Withdrawal::where(['status' => 'pending'])->count();
+
+    return $with;
+}
+
+
+function pendingEarning()
+{
+    $with = Earning::where(['action' => 'pending'])->count();
 
     return $with;
 }
@@ -92,7 +111,6 @@ function RCtotalDepost($user_id)
             if ($al->credit->rate > 0) {
                 $total += ($al->amount / $al->credit->rate);
             }
-
         } else {
             $total += 0;
         }
@@ -197,7 +215,7 @@ function shareProfit($user_id, $amount, $currency = 'usdt')
 {
     $user = User::find($user_id);
 
-    $sponsor = ($user->sponsor) ? $user->sponsor : 2 ; 
+    $sponsor = ($user->sponsor) ? $user->sponsor : 2;
 
     $usdt_amount = $amount;
     // $sponsors = [ ['id' => $user->sponsor ?? 1, 'percent' => 6], ['id' => $user->sponsor_2 ?? 1, 'percent' => 2], ['id' => $user->sponsor_3 ?? 1, 'percent' => 2] ];
@@ -210,16 +228,7 @@ function shareProfit($user_id, $amount, $currency = 'usdt')
     $earned = Earning::create([
         'user_id' => $sponsor,
         'amount' => $percent,
-        'downline' => $user->id
-    ]);
-
-    Wallet::create([
-        'currency' => 'USDT',
-        'amount' => $percent,
-        'type' => 3,
-        'user_id' => $sponsor,
-        'remark' => 'Earning',
-        'ref_id' => $earned->id,
+        'downline' => $user->id,
         'action' => 'pending'
     ]);
 
@@ -228,9 +237,32 @@ function shareProfit($user_id, $amount, $currency = 'usdt')
 
 
 
+function royalPurchase($user_id)
+{
+    $purchase = Purchase::where(['user_id' => $user_id])->where('amount', '>=', 2000)->get();
+    return $purchase;
+}
+
+
 
 
 function formatDate($date)
 {
     return date('j M Y , h:i: a', strtotime($date));
+}
+
+
+
+function monthlyReward($user_id, $date)
+{
+
+
+    $date = Carbon::parse($date);
+
+    $total = RoyaltyPayout::where('user_id', $user_id)->whereMonth('created_at', $date->month)
+        ->whereYear('created_at', $date->year)
+        ->sum('amount');
+
+
+    return $total;
 }
