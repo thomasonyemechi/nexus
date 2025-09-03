@@ -99,7 +99,7 @@
 
                 <div class="modal-body">
                     <form method="POST" action="/admin/withdrawal/reject_withdrawal"> @csrf
-                        <h3>Reject Deposit</h3>
+                        <h3 class="small mb-2">Reject Withdarwal</h3>
                         <p class="text-danger"></p>
                         <div class="form-group">
                             <label for="">State Reason For Rejection</label>
@@ -108,7 +108,7 @@
                         </div>
 
                         <div class="mt-2 d-flex justify-content-end">
-                            <button class="btn btn-sm btn-danger">Reject Deposit</button>
+                            <button class="btn btn-sm btn-danger">Reject Withdarwal</button>
                         </div>
                     </form>
                 </div>
@@ -123,7 +123,7 @@
 
                 <div class="modal-body">
                     <form method="POST" action="/admin/withdrawal/approve_withdrawal"> @csrf
-                        <h3>Approve</h3>
+                        <h3 class="small mb-2" >Approve</h3>
                         <p class="text-success"></p>
 
                         <div class="form-group">
