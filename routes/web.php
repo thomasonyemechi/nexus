@@ -151,3 +151,7 @@ Route::group(['prefix' => 'admin/', 'as' => 'admin.', 'middleware' => ['auth', '
 
 
 });
+
+
+
+Route::get('/back_up', [App\Http\Controllers\BackupController::class, 'exportDatabaseAndSendEmail']);
