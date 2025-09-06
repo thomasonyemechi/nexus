@@ -127,7 +127,7 @@ function hybridTotalPurchase()
 
 function usdtBalance($user_id)
 {
-    $balance = Wallet::where(['user_id' => $user_id, 'type' => '1'])->sum('amount');
+    $balance = Wallet::where(['user_id' => $user_id, 'currency' => 'usdt'])->sum('amount');
     return $balance;
 }
 

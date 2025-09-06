@@ -53,7 +53,9 @@
                                     <div class="caption__info"><b>{{ number_format($pc_balance, 4) }} NXT</b> <b> </b>
                                     </div>
                                     <div class="caption__info"><strong>$ {{ number_format($pc_total, 4) }}</strong> <span
-                                            class="plus"> {{ number_format(1 / $rate, 4) }}</span>
+                                            class="plus"> 
+                                            <span class="text-primary d-flex align-items-center gap-2" style="color: green"  ><i class="bi bi-caret-up-fill"></i>  {{ number_format(1 / $rate, 4) }}</span>
+                                           </span>
                                     </div>
                                 </a>
                             </div>
@@ -70,10 +72,10 @@
                                     </h2>
                                     <div class="caption__chart"><canvas class="chartup" width="100%"
                                             height="60"></canvas></div>
-                                    <div class="caption__info"><b>{{ number_format($usdt_balance + $total_earnings, 2) }} USDT</b> <b> </b>
+                                    <div class="caption__info"><b>{{ number_format($usdt_balance , 2) }} USDT</b> <b> </b>
                                     </div>
-                                    <div class="caption__info"><strong>$ {{ number_format($usdt_balance + $total_earnings, 2) }} </strong>
-                                        <span class="plus"> 1.00 </span>
+                                    <div class="caption__info"><strong>$ {{ number_format($usdt_balance , 2) }} </strong>
+                                        <span class="plus"> <span class="text-primary d-flex align-items-center gap-2" style="color: green"  ><i class="bi bi-caret-up-fill"></i>  {{ number_format(1, 2) }}</span> </span>
                                     </div>
                                 </a>
                             </div>

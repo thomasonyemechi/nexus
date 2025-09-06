@@ -48,9 +48,8 @@ class UserController extends Controller
 
         $usdt_balance = usdtBalance($user_id);
 
-        $spc_balance = spcBalance($user_id);
 
-        $total = $pc_total + $usdt_balance + $spc_balance;
+        $total = $pc_total + $usdt_balance;
 
         $announcement = Announcment::get();
 
@@ -60,7 +59,7 @@ class UserController extends Controller
 
 
         $transactions = Wallet::where(['user_id' => auth()->user()->id])->orderby('id', 'desc')->limit(10)->get();
-        return view('mobile.overview', compact(['transactions', 'pc_balance', 'pending_count', 'total_earnings', 'user_id', 'rate', 'pc_total', 'total', 'usdt_balance', 'spc_balance', 'announcement']));
+        return view('mobile.overview', compact(['transactions', 'pc_balance', 'pending_count', 'total_earnings', 'user_id', 'rate', 'pc_total', 'total', 'usdt_balance', 'announcement']));
     }
 
     function convertIndex()
